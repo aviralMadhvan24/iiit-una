@@ -2,6 +2,11 @@
 DeFi Attack Early Warning System - Backend API
 Entry point for the FastAPI application
 """
+import asyncio
+
+from app.services.simulator import generate_transaction
+from app.services.alert_engine import process_transaction
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -36,8 +41,13 @@ async def startup_event():
     print("🚀 DeFi Risk Engine starting up...")
     print("📊 Model version: v1.0")
     print("🔗 Blockchain network: sepolia")
+    print("⚙️ Starting simulated transaction pool...")
     print("✅ Ready to detect attacks!")
 
-@app.on_event("shutdown")
-async def shutdown_event():
-    print("👋 DeFi Risk Engine shutting down...")
+    async def simulator_loop():
+        while True:
+            tx = generate_transaction()
+            process_transaction(tx)
+            await asyncio.sleep(3)  # one tx every 3 seconds
+
+    asyncio.create_task(simulator_loop())
