@@ -13,14 +13,15 @@ async function apiRequest(path, options = {}) {
   const data = await res.json().catch(() => null);
 
   if (!res.ok) {
-    throw {
-      status: res.status,
-      data,
-    };
+    const error = new Error(data?.detail || "API request failed");
+    error.status = res.status;
+    error.data = data;
+    throw error; // 🔥 DO NOT CATCH HERE
   }
 
   return data;
 }
+
 
 /* ================= HEALTH ================= */
 export const getHealth = () => apiRequest("/health");
@@ -57,7 +58,9 @@ export const verifyAlert = (id, body) =>
 
 export const getAlertStats = () => apiRequest("/alerts/stats");
 
+/* ================= DEFAULT EXPORT ================= */
 export default {
+  request: apiRequest,   // ✅ THIS LINE FIXES EVERYTHING
   getHealth,
   getReadiness,
   predictTransaction,

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import QuickSettings from "../components/QuickSettings";
 import QuickNotifications from "../components/QuickNotifications";
 import AppLayout from "../components/AppLayout";
@@ -160,7 +159,6 @@ export default function Dashboard() {
           isOpen={isNotifOpen}
           onClose={() => setIsNotifOpen(false)}
         />
-
       </PageContainer>
     </AppLayout>
   );
