@@ -248,3 +248,63 @@ class DatabaseService:
             
         finally:
             session.close()
+    def store_simulated_alert(
+        self,
+        tx_hash: str,
+        wallet_address: str,
+        amount_usd: float,
+        risk_score: float,
+        risk_level: str,
+        timestamp: datetime,
+        ):
+        
+        session = self.SessionLocal()
+        try:
+            alert = Alert(
+                tx_hash=tx_hash,
+                wallet_address=wallet_address,
+                risk_score=risk_score,
+                risk_level=risk_level,
+                amount_usd=amount_usd,
+                timestamp=timestamp,
+                verified=False,
+            )
+            session.add(alert)
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            print(f"Error storing simulated alert: {e}")
+        finally:
+            session.close()
+    def store_simulated_prediction(
+        self,
+        tx_hash: str,
+        wallet_address: str,
+        amount_usd: float,
+        risk_score: float,
+        risk_level: str,
+        timestamp: datetime,
+        is_alert: bool,
+    ):
+        session = self.SessionLocal()
+        try:
+            prediction = Prediction(
+                tx_hash=tx_hash,
+                wallet_address=wallet_address,
+                amount_usd=amount_usd,
+                whale_tx=1 if amount_usd > 100_000 else 0,
+                tx_count_user=1,
+                rolling_volume_user=amount_usd,
+                risk_score=risk_score,
+                risk_level=risk_level,
+                is_alert=is_alert,
+                confidence=0.85,
+                timestamp=timestamp,
+            )
+            session.add(prediction)
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            print(f"Error storing simulated prediction: {e}")
+        finally:
+            session.close()

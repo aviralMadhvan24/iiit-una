@@ -5,7 +5,7 @@ Entry point for the FastAPI application
 import asyncio
 
 from app.services.simulator import generate_transaction
-from app.services.alert_engine import process_transaction
+from app.services.processor import process_transaction
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -38,16 +38,12 @@ app.include_router(wallet_auth_router, prefix="/api/v1", tags=["Auth"])
 
 @app.on_event("startup")
 async def startup_event():
-    print("🚀 DeFi Risk Engine starting up...")
-    print("📊 Model version: v1.0")
-    print("🔗 Blockchain network: sepolia")
     print("⚙️ Starting simulated transaction pool...")
-    print("✅ Ready to detect attacks!")
 
     async def simulator_loop():
         while True:
             tx = generate_transaction()
             process_transaction(tx)
-            await asyncio.sleep(3)  # one tx every 3 seconds
+            await asyncio.sleep(3)
 
     asyncio.create_task(simulator_loop())

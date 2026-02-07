@@ -1,5 +1,5 @@
 def score_transaction(tx):
-    score = 0.0
+    score = 0
 
     if tx.amount_usd > 100_000:
         score += 40

@@ -1,21 +1,26 @@
 ALERTS = []
 
-def process_transaction(tx):
-    score = 0
+def add_alert(alert: dict):
+    ALERTS.append(alert)
 
-    if tx.amount_usd > 100_000:
-        score += 40
-    if tx.gas_price > 150:
-        score += 30
-    if tx.slippage > 10:
-        score += 30
+def get_alerts():
+    return ALERTS
 
-    if score >= 70:
-        ALERTS.append({
-            "id": len(ALERTS) + 1,
-            "wallet_address": tx.wallet_address,
-            "amount_usd": tx.amount_usd,
-            "risk_score": score / 100,
-            "risk_level": "critical" if score > 90 else "high",
-            "timestamp": tx.timestamp.isoformat(),
-        })
+def get_alert_stats():
+    total = len(ALERTS)
+    if total == 0:
+        return {
+            "total_alerts": 0,
+            "avg_risk_score": 0,
+            "alert_rate": 0,
+            "total_predictions": 0,
+        }
+
+    avg_risk = sum(a["risk_score"] for a in ALERTS) / total
+
+    return {
+        "total_alerts": total,
+        "avg_risk_score": avg_risk,
+        "alert_rate": total / max(total, 1),
+        "total_predictions": total,
+    }

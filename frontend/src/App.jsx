@@ -7,6 +7,8 @@ import Forensic from "./pages/Forensic";
 import AlertReview from "./pages/AlertReview";
 import AlertAction from "./pages/AlertAction";
 import ProfileSettings from "./pages/ProfileSettings";
+import Transactions from "./pages/Transactions";
+
 
 export default function App() {
   return (
@@ -18,6 +20,8 @@ export default function App() {
       <Route path="/review" element={<AlertReview />} />
       <Route path="/action" element={<AlertAction />} />
       <Route path="/profile" element={<ProfileSettings />} />
+      <Route path="/transactions" element={<Transactions />} />
+
     </Routes>
   );
 }
