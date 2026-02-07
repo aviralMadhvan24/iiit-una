@@ -21,3 +21,22 @@ node_modules/
 
 # OS
 .DS_Store
+
+# Python virtual environments
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Env files
+.env
+.env.*
+
+# Databases
+*.db
+
+# ML artifacts
+*.pkl
