@@ -1,11 +1,47 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Modal from "../components/Modal";
 import PrimaryButton from "../components/PrimaryButton";
 import SecondaryButton from "../components/SecondaryButton";
 
+import { getAlerts, verifyAlert } from "../lib/api";
+
 export default function AlertReview() {
   const navigate = useNavigate();
+  const [alert, setAlert] = useState(null);
+  const [notes, setNotes] = useState("");
+
+  useEffect(() => {
+    async function loadAlert() {
+      try {
+        const res = await getAlerts({ limit: 1 });
+        if (res.alerts && res.alerts.length > 0) {
+          setAlert(res.alerts[0]);
+        }
+      } catch (err) {
+        console.error("Failed to load alert for review", err);
+      }
+    }
+
+    loadAlert();
+  }, []);
+
+  async function handleConfirm() {
+    if (!alert) return;
+
+    try {
+      await verifyAlert(alert.id, {
+        verified: true,
+        false_positive: false,
+        notes: notes || "Reviewed by security analyst",
+      });
+
+      navigate("/action");
+    } catch (err) {
+      console.error("Alert verification failed", err);
+    }
+  }
 
   return (
     <Modal>
@@ -45,7 +81,10 @@ export default function AlertReview() {
           <label className="text-sm text-slate-300">
             Analyst Notes (Optional)
           </label>
+
           <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
             className="w-full min-h-[120px] bg-background-dark/80 border border-slate-700 rounded-lg p-4 text-white resize-none"
             placeholder="Enter analysis notes..."
           />
@@ -58,7 +97,7 @@ export default function AlertReview() {
           Cancel
         </SecondaryButton>
 
-        <PrimaryButton onClick={() => navigate("/action")}>
+        <PrimaryButton onClick={handleConfirm}>
           <span className="material-symbols-outlined mr-2">
             verified_user
           </span>
@@ -68,8 +107,12 @@ export default function AlertReview() {
 
       {/* ================= META ================= */}
       <div className="px-8 pb-4 flex justify-between text-[10px] text-slate-600">
-        <span>TX_ID: 0x82...F492</span>
-        <span>Security Protocol v4.2.1</span>
+        <span>
+          TX_ID: {alert?.tx_hash || "--"}
+        </span>
+        <span>
+          Security Protocol v4.2.1
+        </span>
       </div>
 
     </Modal>

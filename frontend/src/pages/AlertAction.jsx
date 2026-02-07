@@ -1,37 +1,113 @@
+import { useNavigate } from "react-router-dom";
+
 import AppLayout from "../components/AppLayout";
+import PageContainer from "../components/PageContainer";
 import GlassCard from "../components/GlassCard";
 import PrimaryButton from "../components/PrimaryButton";
-import { useNavigate } from "react-router-dom";
+import SecondaryButton from "../components/SecondaryButton";
 
 export default function AlertAction() {
   const navigate = useNavigate();
 
   return (
-    <AppLayout headerProps={{ title: "Alert Action Summary" }}>
-      <div className="flex-1 flex items-center justify-center p-6 bg-background-dark font-display">
-        <GlassCard className="w-full max-w-3xl overflow-hidden shadow-[0_0_40px_rgba(0,255,163,0.1)] border-[#00ffa350]">
-          <div className="p-8 text-center border-b border-white/5">
-            <span className="material-symbols-outlined text-accent-green text-6xl">verified_user</span>
-            <h2 className="text-3xl font-bold mt-4">Alert ID: #AL-9842</h2>
-            <p className="text-accent-red font-bold mt-2 italic uppercase tracking-widest text-sm">Critical Risk Score: 94</p>
-          </div>
-          
-          <div className="p-8 bg-black/20">
-            <label className="block text-xs uppercase tracking-widest text-slate-500 mb-2">Action Taken</label>
-            <p className="text-white font-medium text-lg">Escalated to Security Protocol Mitigation Team</p>
-          </div>
+    <AppLayout
+      headerProps={{
+        title: "Mitigation Actions",
+        showBack: true,
+        backTo: "/dashboard",
+      }}
+    >
+      <PageContainer>
 
-          <div className="p-8 border-t border-white/5 bg-black/40 flex justify-between gap-4">
-            <PrimaryButton onClick={() => navigate('/')}>
-              <span className="material-symbols-outlined mr-2 align-middle">dashboard</span>
-              Dashboard
-            </PrimaryButton>
-            <button onClick={() => navigate('/forensic')} className="text-slate-400 hover:text-white transition">
-              Monitor Wallet Activity
-            </button>
-          </div>
+        {/* ================= ACTION SUMMARY ================= */}
+        <GlassCard className="p-6 mb-6">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <span className="material-symbols-outlined text-red-400">
+              gavel
+            </span>
+            Threat Response Initiated
+          </h2>
+
+          <p className="text-slate-300 leading-relaxed">
+            The alert has been successfully reviewed and logged.
+            Mitigation actions can now be initiated to prevent
+            further exposure or loss.
+          </p>
         </GlassCard>
-      </div>
+
+        {/* ================= ACTION OPTIONS ================= */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <GlassCard className="p-6 cursor-pointer hover:bg-white/5 transition">
+            <h3 className="text-lg font-bold mb-2 flex items-center gap-2">
+              <span className="material-symbols-outlined text-yellow-400">
+                lock
+              </span>
+              Freeze Wallet
+            </h3>
+
+            <p className="text-sm text-slate-400">
+              Temporarily suspend transactions originating
+              from the flagged wallet address.
+            </p>
+          </GlassCard>
+
+          <GlassCard className="p-6 cursor-pointer hover:bg-white/5 transition">
+            <h3 className="text-lg font-bold mb-2 flex items-center gap-2">
+              <span className="material-symbols-outlined text-blue-400">
+                public
+              </span>
+              Notify Protocol
+            </h3>
+
+            <p className="text-sm text-slate-400">
+              Send an automated security notification
+              to the affected DeFi protocol.
+            </p>
+          </GlassCard>
+
+          <GlassCard className="p-6 cursor-pointer hover:bg-white/5 transition">
+            <h3 className="text-lg font-bold mb-2 flex items-center gap-2">
+              <span className="material-symbols-outlined text-green-400">
+                security
+              </span>
+              Increase Monitoring
+            </h3>
+
+            <p className="text-sm text-slate-400">
+              Escalate monitoring intensity for similar
+              transaction patterns.
+            </p>
+          </GlassCard>
+
+          <GlassCard className="p-6 cursor-pointer hover:bg-white/5 transition">
+            <h3 className="text-lg font-bold mb-2 flex items-center gap-2">
+              <span className="material-symbols-outlined text-purple-400">
+                description
+              </span>
+              Generate Incident Report
+            </h3>
+
+            <p className="text-sm text-slate-400">
+              Compile a formal incident report for
+              compliance and auditing.
+            </p>
+          </GlassCard>
+
+        </div>
+
+        {/* ================= FOOTER ================= */}
+        <div className="flex justify-end gap-4 mt-8">
+          <SecondaryButton onClick={() => navigate("/dashboard")}>
+            Return to Dashboard
+          </SecondaryButton>
+
+          <PrimaryButton onClick={() => navigate("/dashboard")}>
+            Done
+          </PrimaryButton>
+        </div>
+
+      </PageContainer>
     </AppLayout>
   );
 }

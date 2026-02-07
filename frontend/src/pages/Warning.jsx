@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import AppLayout from "../components/AppLayout";
@@ -6,8 +7,27 @@ import GlassCard from "../components/GlassCard";
 import PrimaryButton from "../components/PrimaryButton";
 import SecondaryButton from "../components/SecondaryButton";
 
+import { getAlerts } from "../lib/api";
+
 export default function Warning() {
   const navigate = useNavigate();
+  const [alert, setAlert] = useState(null);
+
+  useEffect(() => {
+    async function loadAlert() {
+      try {
+        // Fetch most recent alert
+        const res = await getAlerts({ limit: 1 });
+        if (res.alerts && res.alerts.length > 0) {
+          setAlert(res.alerts[0]);
+        }
+      } catch (err) {
+        console.error("Failed to load alert", err);
+      }
+    }
+
+    loadAlert();
+  }, []);
 
   return (
     <AppLayout
@@ -17,7 +37,10 @@ export default function Warning() {
         backTo: "/dashboard",
         rightSlot: (
           <div className="text-xs font-mono text-slate-400">
-            Alert ID: <span className="text-red-400 font-bold">#AL-9842</span>
+            Alert ID:{" "}
+            <span className="text-red-400 font-bold">
+              #{alert ? alert.id : "--"}
+            </span>
           </div>
         ),
       }}
@@ -47,14 +70,14 @@ export default function Warning() {
                     Transaction Hash
                   </p>
                   <p className="font-mono text-lg">
-                    0x84a...2f1
+                    {alert?.tx_hash || "--"}
                   </p>
                 </div>
 
                 <div>
                   <p className="text-xs text-slate-400">Block</p>
                   <p className="font-mono text-lg">
-                    18,452,994
+                    --
                   </p>
                 </div>
 
@@ -63,7 +86,7 @@ export default function Warning() {
                     From Wallet
                   </p>
                   <p className="font-mono">
-                    0x71c...8e4
+                    {alert?.wallet_address || "--"}
                   </p>
                 </div>
 
@@ -72,7 +95,7 @@ export default function Warning() {
                     Protocol
                   </p>
                   <p className="font-mono">
-                    Aave V3
+                    DeFi Protocol
                   </p>
                 </div>
               </div>
@@ -83,7 +106,7 @@ export default function Warning() {
                     Value
                   </p>
                   <p className="text-3xl font-bold">
-                    $4.5M
+                    ${alert?.amount_usd ?? "--"}
                   </p>
                 </div>
 
@@ -107,18 +130,19 @@ export default function Warning() {
 
               <div className="text-center">
                 <p className="text-5xl font-bold text-red-400">
-                  94
+                  {alert ? Math.round(alert.risk_score * 100) : "--"}
                   <span className="text-2xl">/100</span>
                 </p>
+
                 <p className="text-sm text-red-400 font-bold mt-2 uppercase">
-                  Critical Risk
+                  {alert?.risk_level || "CRITICAL"} Risk
                 </p>
               </div>
 
               <ul className="mt-6 space-y-3 text-sm text-slate-300">
                 <li>• Abnormal transaction size</li>
-                <li>• Flash loan interaction</li>
-                <li>• Rapid liquidity removal</li>
+                <li>• Behavioral anomaly detected</li>
+                <li>• ML-based risk escalation</li>
               </ul>
             </GlassCard>
           </div>
