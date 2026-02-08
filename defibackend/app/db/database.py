@@ -20,14 +20,18 @@ from datetime import datetime, timedelta
 from typing import List, Optional
 
 from config.settings import settings
-from app.schemas.models import PredictRequest, PredictResponse, AlertRecord, RiskLevel
+from app.schemas.models import (
+    PredictRequest,
+    PredictResponse,
+    AlertRecord,
+    RiskLevel,
+)
 
 Base = declarative_base()
 
-
-# =======================
-# DATABASE MODELS
-# =======================
+# ============================
+# ORM MODELS
+# ============================
 
 class Alert(Base):
     __tablename__ = "alerts"
@@ -62,9 +66,22 @@ class Prediction(Base):
     timestamp = Column(DateTime, default=datetime.utcnow, index=True)
 
 
-# =======================
+class TelegramMapping(Base):
+    """
+    Wallet ↔ Telegram chat mapping
+    One wallet = one Telegram chat
+    """
+    __tablename__ = "telegram_mappings"
+
+    id = Column(Integer, primary_key=True, index=True)
+    wallet_address = Column(String, unique=True, index=True, nullable=False)
+    telegram_chat_id = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+# ============================
 # DATABASE SERVICE
-# =======================
+# ============================
 
 class DatabaseService:
     """
@@ -78,11 +95,15 @@ class DatabaseService:
         self.SessionLocal = sessionmaker(bind=self.engine)
         print(f"✅ Database initialized at {settings.DATABASE_URL}")
 
-    # -----------------------
-    # PREDICTIONS (REAL)
-    # -----------------------
+    # ----------------------------
+    # PREDICTIONS
+    # ----------------------------
 
-    def store_prediction(self, request: PredictRequest, response: PredictResponse):
+    def store_prediction(
+        self,
+        request: PredictRequest,
+        response: PredictResponse,
+    ):
         session = self.SessionLocal()
         try:
             prediction = Prediction(
@@ -102,9 +123,13 @@ class DatabaseService:
             session.commit()
         except Exception as e:
             session.rollback()
-            print(f"Error storing prediction: {e}")
+            print(f"❌ Error storing prediction: {e}")
         finally:
             session.close()
+
+    # ----------------------------
+    # ALERTS
+    # ----------------------------
 
     def store_alert(
         self,
@@ -130,79 +155,33 @@ class DatabaseService:
             return alert.id
         except Exception as e:
             session.rollback()
-            print(f"Error storing alert: {e}")
+            print(f"❌ Error storing alert: {e}")
             return -1
         finally:
             session.close()
 
-    # -----------------------
-    # SIMULATED DATA SUPPORT
-    # -----------------------
-
-    def store_simulated_prediction(
-        self,
-        tx_hash: str,
-        wallet_address: str,
-        amount_usd: float,
-        risk_score: float,
-        risk_level: str,
-        timestamp: datetime,
-        is_alert: bool,
-    ):
+    def get_alert_by_id(self, alert_id: int) -> Optional[AlertRecord]:
         session = self.SessionLocal()
         try:
-            prediction = Prediction(
-                tx_hash=tx_hash,
-                wallet_address=wallet_address,
-                amount_usd=amount_usd,
-                whale_tx=1 if amount_usd > 100_000 else 0,
-                tx_count_user=1,
-                rolling_volume_user=amount_usd,
-                risk_score=risk_score,
-                risk_level=risk_level,
-                is_alert=is_alert,
-                confidence=0.85,
-                timestamp=timestamp,
+            alert = session.query(Alert).filter(Alert.id == alert_id).first()
+            if not alert:
+                return None
+
+            return AlertRecord(
+                id=alert.id,
+                tx_hash=alert.tx_hash,
+                wallet_address=alert.wallet_address,
+                risk_score=alert.risk_score,
+                risk_level=RiskLevel(alert.risk_level),
+                amount_usd=alert.amount_usd,
+                timestamp=alert.timestamp,
+                on_chain_tx_hash=alert.on_chain_tx_hash,
+                verified=alert.verified,
+                false_positive=alert.false_positive,
+                notes=alert.notes,
             )
-            session.add(prediction)
-            session.commit()
-        except Exception as e:
-            session.rollback()
-            print(f"Error storing simulated prediction: {e}")
         finally:
             session.close()
-
-    def store_simulated_alert(
-        self,
-        tx_hash: str,
-        wallet_address: str,
-        amount_usd: float,
-        risk_score: float,
-        risk_level: str,
-        timestamp: datetime,
-    ):
-        session = self.SessionLocal()
-        try:
-            alert = Alert(
-                tx_hash=tx_hash,
-                wallet_address=wallet_address,
-                risk_score=risk_score,
-                risk_level=risk_level,
-                amount_usd=amount_usd,
-                timestamp=timestamp,
-                verified=False,
-            )
-            session.add(alert)
-            session.commit()
-        except Exception as e:
-            session.rollback()
-            print(f"Error storing simulated alert: {e}")
-        finally:
-            session.close()
-
-    # -----------------------
-    # ALERT FETCHING
-    # -----------------------
 
     def get_alerts(
         self,
@@ -247,36 +226,76 @@ class DatabaseService:
         finally:
             session.close()
 
-    # -----------------------
-    # 🔥 ROLLING STATISTICS (FIXED)
-    # -----------------------
+    # ----------------------------
+    # TELEGRAM MAPPING
+    # ----------------------------
 
-    def get_statistics(self) -> dict:
-        """
-        Rolling window statistics (last 60 seconds)
-        Prevents average flattening on graphs.
-        """
+    def save_telegram_chat_id(
+        self,
+        wallet_address: str,
+        telegram_chat_id: str,
+    ):
         session = self.SessionLocal()
         try:
-            now = datetime.utcnow()
-            window_start = now - timedelta(seconds=60)
+            mapping = (
+                session.query(TelegramMapping)
+                .filter(TelegramMapping.wallet_address == wallet_address)
+                .first()
+            )
 
-            recent_predictions = session.query(Prediction).filter(
-                Prediction.timestamp >= window_start
-            ).all()
-
-            total_predictions = len(recent_predictions)
-            total_alerts = sum(1 for p in recent_predictions if p.is_alert)
-
-            if total_predictions > 0:
-                avg_risk_score = (
-                    sum(p.risk_score for p in recent_predictions)
-                    / total_predictions
-                )
-                alert_rate = total_alerts / total_predictions
+            if mapping:
+                mapping.telegram_chat_id = telegram_chat_id
             else:
-                avg_risk_score = 0.0
-                alert_rate = 0.0
+                mapping = TelegramMapping(
+                    wallet_address=wallet_address,
+                    telegram_chat_id=telegram_chat_id,
+                )
+                session.add(mapping)
+
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            print(f"❌ Error saving Telegram mapping: {e}")
+        finally:
+            session.close()
+
+    def get_telegram_chat_id(
+        self,
+        wallet_address: str,
+    ) -> Optional[str]:
+        session = self.SessionLocal()
+        try:
+            mapping = (
+                session.query(TelegramMapping.telegram_chat_id)
+                .filter(TelegramMapping.wallet_address == wallet_address)
+                .first()
+            )
+            return mapping[0] if mapping else None
+        finally:
+            session.close()
+
+    # ----------------------------
+    # STATS
+    # ----------------------------
+
+    def get_statistics(self) -> dict:
+        session = self.SessionLocal()
+        try:
+            total_predictions = session.query(Prediction).count()
+            total_alerts = session.query(Alert).count()
+
+            alert_rate = (
+                total_alerts / total_predictions
+                if total_predictions > 0
+                else 0.0
+            )
+
+            avg_risk = session.query(Prediction.risk_score).all()
+            avg_risk_score = (
+                sum(r[0] for r in avg_risk) / len(avg_risk)
+                if avg_risk
+                else 0.0
+            )
 
             return {
                 "total_predictions": total_predictions,

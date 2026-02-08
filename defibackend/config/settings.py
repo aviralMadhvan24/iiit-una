@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     DEBUG: bool = False
     MODEL_VERSION: str = "v1.0"
     
+    TELEGRAM_BOT_TOKEN: str | None = None
     # API
     ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
     
