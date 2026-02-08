@@ -6,7 +6,7 @@ import AppLayout from "../components/AppLayout";
 import PageContainer from "../components/PageContainer";
 import MetricCard from "../components/MetricCard";
 import AlertItem from "../components/AlertItem";
-import RiskChart from "../components/RiskCharts.jsx";
+import RiskChart from "../components/RiskCharts";
 import { getAlertStats, getAlerts } from "../lib/api";
 
 export default function Dashboard() {
