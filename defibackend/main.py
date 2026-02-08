@@ -9,6 +9,8 @@ from app.services.processor import process_transaction
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.simulator import router as simulator_router
+
 
 from app.api import predict, alerts, health
 from app.auth.wallet import router as wallet_auth_router
@@ -37,16 +39,7 @@ app.include_router(health.router, prefix="/api/v1", tags=["Health"])
 app.include_router(predict.router, prefix="/api/v1", tags=["Prediction"])
 app.include_router(alerts.router, prefix="/api/v1", tags=["Alerts"])
 app.include_router(wallet_auth_router, prefix="/api/v1", tags=["Auth"])
+app.include_router(simulator_router, prefix="/api/v1")
+
 
 app.include_router(wallet_activity_router, prefix="/api/v1")
-@app.on_event("startup")
-async def startup_event():
-    print("⚙️ Starting simulated transaction pool...")
-
-    async def simulator_loop():
-        while True:
-            tx = generate_transaction()
-            process_transaction(tx)
-            await asyncio.sleep(3)
-
-    asyncio.create_task(simulator_loop())

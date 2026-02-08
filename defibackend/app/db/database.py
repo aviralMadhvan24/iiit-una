@@ -4,6 +4,8 @@ Operational storage for alerts and predictions
 NOT used for trust - only operations
 "Database is mutable, blockchain is authoritative"
 """
+from sqlalchemy import text
+
 
 from sqlalchemy import (
     create_engine,
@@ -370,3 +372,19 @@ class DatabaseService:
         finally:
             session.close()
 
+    def reset_transactions(self):
+        """
+        Hard reset predictions and alerts.
+        Used for demo / simulator reset.
+        """
+        session = self.SessionLocal()
+        try:
+            session.execute(text("DELETE FROM predictions"))
+            session.execute(text("DELETE FROM alerts"))
+            session.commit()
+            print("🧹 Transactions and alerts reset")
+        except Exception as e:
+            session.rollback()
+            print(f"❌ Reset failed: {e}")
+        finally:
+            session.close()
