@@ -4,7 +4,7 @@
       "routes": [
         {
           "source": "/(.*)",
-          "destination": "frontend/index.html"
+          "destination": "/frontend/index.html"
         }
       ]
     }
