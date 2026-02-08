@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 const API_BASE = "http://localhost:8000/api/v1";
 
 export default function Header({
-  title = "Sentinel AI",
+  title = "Suraksha Chain",
   onSettingsClick,
   onNotifClick,
 }) {
@@ -56,7 +56,7 @@ export default function Header({
 
   async function resetPool() {
     const ok = window.confirm(
-      "This will clear ALL transactions and alerts.\nContinue?"
+      "This will clear ALL transactions and alerts.\nContinue?",
     );
     if (!ok) return;
 
@@ -80,7 +80,6 @@ export default function Header({
   // ======================
   return (
     <header className="flex items-center justify-between border-b border-[#283639] px-6 py-4 bg-[#111718] sticky top-0 z-50 font-display">
-
       {/* LEFT */}
       <div
         className="flex items-center gap-4 text-white cursor-pointer"
@@ -94,7 +93,6 @@ export default function Header({
 
       {/* CENTER */}
       <div className="hidden md:flex items-center gap-4">
-
         {/* Network */}
         <div className="flex items-center gap-2 px-4 py-2 bg-surface-dark rounded-full border border-[#283639]">
           <span className="material-symbols-outlined text-gray-400 text-sm">
@@ -133,7 +131,6 @@ export default function Header({
         {/* 🔥 SIMULATOR CONTROLS */}
         {/* ========================= */}
         <div className="flex items-center gap-2 px-3 py-2 bg-surface-dark rounded-full border border-[#283639]">
-
           <span className="text-xs text-gray-400">Pool</span>
 
           <span
@@ -175,7 +172,6 @@ export default function Header({
 
       {/* RIGHT */}
       <div className="flex items-center gap-4">
-
         {/* Notifications */}
         <button
           onClick={onNotifClick}
