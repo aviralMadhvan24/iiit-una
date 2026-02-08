@@ -8,7 +8,7 @@ import {
   CartesianGrid,
 } from "recharts";
 
-export default function RiskChart({ data }) {
+export default function RiskCharts({ data }) {
   return (
     <ResponsiveContainer width="100%" height={300}>
       <LineChart data={data}>
