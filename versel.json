@@ -1,7 +1,7 @@
 {
   "projects": {
     "frontend": {
-      "rewrites": [
+      "routes": [
         {
           "source": "/(.*)",
           "destination": "/index.html"
