@@ -40,3 +40,7 @@ __pycache__/
 
 # ML artifacts
 *.pkl
+
+# --- allow ML model artifacts ---
+!defibackend/app/models/
+!defibackend/app/models/*.pkl
