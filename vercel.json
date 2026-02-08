@@ -1,0 +1,12 @@
+{
+  "projects": {
+    "frontend": {
+      "routes": [
+        {
+          "source": "/(.*)",
+          "destination": "/frontend/index.html"
+        }
+      ]
+    }
+  }
+}
