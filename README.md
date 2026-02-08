@@ -13,9 +13,9 @@
 [![WebSockets](https://img.shields.io/badge/WebSocket-010101?logo=socket.io\&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
 [![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite\&logoColor=white)](https://vitejs.dev/)
 
-🚨 **Early detection at mempool level**
-📊 **Correlation between pending & confirmed transactions**
-🧠 **AI-assisted risk scoring**
+ **Early detection at mempool level**
+ **Correlation between pending & confirmed transactions**
+ **AI-assisted risk scoring**
 
 [Features](#-key-features) • [Architecture](#-architecture--flow) • [Attack Detection](#-attack-detection-logic) • [Tech Stack](#-tech-stack) • [Future Roadmap](#-future-roadmap)
 
@@ -23,7 +23,7 @@
 
 ---
 
-## 🚨 The Problem
+##  The Problem
 
 Decentralized Finance (DeFi) has unlocked permissionless finance — but it has also become a **high-value target for sophisticated attacks**.
 
@@ -37,13 +37,13 @@ Decentralized Finance (DeFi) has unlocked permissionless finance — but it has 
 
 > **Critical Gap:**
 > A malicious Uniswap transaction appears in the mempool, signaling a sandwich attack.
-> ⚠️ **Users have a time window — but no system warns them.**
+>  **Users have a time window — but no system warns them.**
 
 **Suraksha Chain fills this gap.**
 
 ---
 
-## 🧠 Solution Overview
+##  Solution Overview
 
 **Suraksha Chain** is a **real-time DeFi attack early warning system** that:
 
@@ -52,15 +52,15 @@ Decentralized Finance (DeFi) has unlocked permissionless finance — but it has 
 * Correlates **pending vs confirmed on-chain behavior**
 * Alerts users *before* malicious execution
 
-> 🟢 *From post-mortem analysis → to pre-execution prevention*
+>  *From post-mortem analysis → to pre-execution prevention*
 
 ---
 
-## 🏗️ Architecture & Flow
+##  Architecture & Flow
 
 ```mermaid
 graph TD
-    A[⛓️ Ethereum Mempool] --> B[Mempool Listener]
+    A[ Ethereum Mempool] --> B[Mempool Listener]
     B --> C[Uniswap Tx Filter]
     C --> D[Tx Decoder]
     
@@ -70,11 +70,11 @@ graph TD
     E --> G[Pre-Execution Risk Score]
     F --> G
     
-    G --> H[🚨 Real-Time Alert Engine]
+    G --> H[ Real-Time Alert Engine]
     
     H --> I[Dashboard UI]
     
-    A --> J[⛓️ Confirmed Blocks]
+    A --> J[ Confirmed Blocks]
     J --> K[On-Chain Analyzer]
     
     K --> L[Post-Execution Risk]
@@ -85,7 +85,7 @@ graph TD
 
 ---
 
-## 🔍 How It Works
+##  How It Works
 
 1. **Mempool Monitoring**
    Listens to pending Ethereum transactions via WebSocket RPC.
@@ -115,7 +115,7 @@ graph TD
 
 ---
 
-## ⚔️ Attack Detection Logic
+##  Attack Detection Logic
 
 | Attack Type            | Detection Signal                       |
 | ---------------------- | -------------------------------------- |
@@ -127,20 +127,20 @@ graph TD
 
 ---
 
-## ✨ Key Features
+##  Key Features
 
 <table>
 <tr>
 <td width="50%">
 
-### 🔴 Mempool-Level Intelligence
+###  Mempool-Level Intelligence
 
 Detects malicious intent *before* transactions are mined — a capability missing in most DeFi analytics tools.
 
 </td>
 <td width="50%">
 
-### 🧠 AI-Assisted Risk Scoring
+###  AI-Assisted Risk Scoring
 
 Each transaction receives a dynamic risk score based on behavior, size, gas strategy, and historical patterns.
 
@@ -150,14 +150,14 @@ Each transaction receives a dynamic risk score based on behavior, size, gas stra
 <tr>
 <td width="50%">
 
-### 🔁 Pending vs Confirmed Correlation
+###  Pending vs Confirmed Correlation
 
 Compares predicted risk with finalized outcomes — improving trust and explainability.
 
 </td>
 <td width="50%">
 
-### 📊 Advanced Visual Dashboard
+###  Advanced Visual Dashboard
 
 Live mempool stream, confirmed block view, and anomaly popups for intuitive analysis.
 
@@ -167,7 +167,7 @@ Live mempool stream, confirmed block view, and anomaly popups for intuitive anal
 <tr>
 <td colspan="2">
 
-### ⚙️ Uniswap-Focused Analysis
+###  Uniswap-Focused Analysis
 
 Built specifically around Uniswap — the most widely used and most attacked DEX.
 
@@ -177,7 +177,7 @@ Built specifically around Uniswap — the most widely used and most attacked DEX
 
 ---
 
-## 🧰 Tech Stack
+##  Tech Stack
 
 <div align="center">
 
@@ -194,7 +194,7 @@ Built specifically around Uniswap — the most widely used and most attacked DEX
 
 ---
 
-## 🧪 Demo & Simulation Strategy
+##  Demo & Simulation Strategy
 
 Since real mempool access is complex in hackathons:
 
@@ -202,12 +202,10 @@ Since real mempool access is complex in hackathons:
 * Simulated mempool feed mimics real conditions
 * Allows deterministic, judge-friendly demos
 
-✅ Accepted industry practice
-✅ Transparent and reproducible
 
 ---
 
-## 🚀 Why This Is Unique
+##  Why This Is Unique
 
 | Traditional Tools      | DeFi Sentinel                 |
 | ---------------------- | ----------------------------- |
@@ -216,20 +214,19 @@ Since real mempool access is complex in hackathons:
 | ❌ Technical raw data   | ✅ **Explainable risk scores** |
 | ❌ Reactive dashboards  | ✅ **Preventative alerts**     |
 
-> **Judges’ Line:**
 > *“Suraksha Chain doesn’t analyze attacks — it predicts them.”*
 
 ---
 
-## 📈 Impact & Benefits
+##  Impact & Benefits
 
-### 🌍 Impact
+###  Impact
 
 * Protects users from silent value extraction
 * Reduces MEV exploitation visibility gap
 * Improves DeFi trust and transparency
 
-### 💡 Benefits
+###  Benefits
 
 * Early reaction window
 * Explainable intelligence
@@ -238,7 +235,7 @@ Since real mempool access is complex in hackathons:
 
 ---
 
-## 🛣️ Future Roadmap
+##  Future Roadmap
 
 <details>
 <summary><b>Phase 1: Intelligence Expansion</b></summary>
@@ -269,7 +266,7 @@ Since real mempool access is complex in hackathons:
 
 ---
 
-## ⚙️ Getting Started
+##  Getting Started
 
 ```bash
 # Clone the repository
@@ -284,7 +281,7 @@ npm run dev
 
 ---
 
-## 👨‍💻 Authors
+##  Authors
 
 **Team – The Hacktivist**
 
