@@ -37,6 +37,7 @@ app.include_router(health.router, prefix="/api/v1", tags=["Health"])
 app.include_router(predict.router, prefix="/api/v1", tags=["Prediction"])
 app.include_router(alerts.router, prefix="/api/v1", tags=["Alerts"])
 app.include_router(wallet_auth_router, prefix="/api/v1", tags=["Auth"])
+
 app.include_router(wallet_activity_router, prefix="/api/v1")
 @app.on_event("startup")
 async def startup_event():
