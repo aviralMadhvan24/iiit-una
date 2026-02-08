@@ -8,6 +8,7 @@ db = DatabaseService()
 
 
 def process_transaction(tx):
+    print("🧪 Processing tx:", tx.tx_hash)
     score = score_transaction(tx)  # 0–100
     risk_score = score / 100
 
@@ -19,6 +20,7 @@ def process_transaction(tx):
         risk_level = RiskLevel.LOW
 
     is_alert = score >= 70
+    print("📥 Storing prediction")
 
     # ✅ Store prediction
     db.store_simulated_prediction(
@@ -33,6 +35,8 @@ def process_transaction(tx):
 
     if not is_alert:
         return
+    print("🚨 Alert detected, storing alert")
+
 
     # ✅ Store alert
     db.store_simulated_alert(
