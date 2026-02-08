@@ -1,7 +1,15 @@
-from app.notifications.telegram_client import TelegramClient
 from app.schemas.models import AlertRecord
+from app.notifications.telegram_client import TelegramClient
+from config.settings import settings
 
-telegram = TelegramClient()
+telegram = None
+
+def get_telegram():
+    global telegram
+    if telegram is None:
+        telegram = TelegramClient()
+    return telegram
+
 
 def format_alert(alert: AlertRecord) -> str:
     return f"""
@@ -13,10 +21,17 @@ def format_alert(alert: AlertRecord) -> str:
 
 👛 *Wallet:* `{alert.wallet_address}`
 🕒 *Time:* {alert.timestamp.isoformat()}
-
-🔎 Action: Manual review recommended
 """
 
+
 async def notify_telegram(chat_id: str, alert: AlertRecord):
-    message = format_alert(alert)
-    await telegram.send_message(chat_id, message)
+    if not settings.TELEGRAM_BOT_TOKEN:
+        print("ℹ️ Telegram disabled")
+        return
+
+    try:
+        telegram = get_telegram()
+        await telegram.send_message(chat_id, format_alert(alert))
+        print(f"✅ Telegram alert sent to {chat_id}")
+    except Exception as e:
+        print(f"❌ Telegram send failed: {e}")

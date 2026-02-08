@@ -4,6 +4,7 @@ Centralized configuration management
 """
 from pydantic_settings import BaseSettings
 from typing import List
+from typing import Optional
 
 class Settings(BaseSettings):
     """Application settings"""
@@ -33,7 +34,7 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = "sqlite:///./defi_risk.db"
     ETHERSCAN_API_KEY: str
-    TELEGRAM_BOT_TOKEN: str = None
+    TELEGRAM_BOT_TOKEN: Optional[str] = None
     # Feature names (must match training)
     FEATURE_NAMES: List[str] = [
         "amount_usd",
@@ -45,5 +46,5 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = True
-
+        extra = "allow"
 settings = Settings()

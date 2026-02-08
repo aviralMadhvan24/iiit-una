@@ -10,7 +10,7 @@ class TelegramClient:
 
     async def send_message(self, chat_id: str, text: str):
         async with httpx.AsyncClient(timeout=10) as client:
-            await client.post(
+            response = await client.post(
                 f"{self.base_url}/sendMessage",
                 json={
                     "chat_id": chat_id,
@@ -18,3 +18,4 @@ class TelegramClient:
                     "parse_mode": "Markdown"
                 }
             )
+            response.raise_for_status()
