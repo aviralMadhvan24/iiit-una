@@ -20,14 +20,24 @@ from app.services.scoring import ScoringService
 from app.db.database import DatabaseService
 from app.web3.alert_registry import AlertRegistry
 
+# 🔔 Telegram notification service
+from app.notifications.telegram_service import notify_telegram
+
 router = APIRouter()
 
-# Initialize services
+# ============================
+# SERVICE INITIALIZATION
+# ============================
+
 inference_service = InferenceService()
 scoring_service = ScoringService()
 db_service = DatabaseService()
 alert_registry = AlertRegistry()
 
+
+# ============================
+# SINGLE PREDICTION
+# ============================
 
 @router.post("/predict", response_model=PredictResponse)
 async def predict_transaction(
@@ -63,16 +73,29 @@ async def predict_transaction(
             response=response,
         )
 
-        # ================== 4. STORE ALERT (CORRECT) ==================
+        # ================== 4. STORE ALERT (DB FIRST) ==================
         if is_alert:
-            background_tasks.add_task(
-                db_service.store_alert,
+            alert_id = db_service.store_alert(
                 request=request,
                 response=response,
                 on_chain_tx_hash=None,
             )
 
-        # ================== 5. ON-CHAIN ALERT ==================
+            # ================== 5. TELEGRAM NOTIFICATION ==================
+            chat_id = db_service.get_telegram_chat_id(
+                request.wallet_address
+            )
+
+            if chat_id and alert_id != -1:
+                alert_record = db_service.get_alert_by_id(alert_id)
+                if alert_record:
+                    background_tasks.add_task(
+                        notify_telegram,
+                        chat_id,
+                        alert_record,
+                    )
+
+        # ================== 6. ON-CHAIN ALERT ==================
         if is_alert and risk_level in [RiskLevel.HIGH, RiskLevel.CRITICAL]:
             background_tasks.add_task(
                 alert_registry.create_alert,
@@ -91,6 +114,10 @@ async def predict_transaction(
             detail=f"Prediction failed: {str(e)}",
         )
 
+
+# ============================
+# BATCH PREDICTION
+# ============================
 
 @router.post("/predict/batch", response_model=BatchPredictResponse)
 async def predict_batch(
@@ -113,13 +140,9 @@ async def predict_batch(
         for tx, risk_score in zip(
             request.transactions, risk_scores
         ):
-            risk_level = scoring_service.classify_risk_level(
-                risk_score
-            )
+            risk_level = scoring_service.classify_risk_level(risk_score)
             is_alert = scoring_service.should_alert(risk_score)
-            confidence = scoring_service.calculate_confidence(
-                risk_score
-            )
+            confidence = scoring_service.calculate_confidence(risk_score)
 
             if is_alert:
                 alerts_triggered += 1
@@ -142,7 +165,7 @@ async def predict_batch(
                 response=prediction,
             )
 
-            # Store alert (CORRECT)
+            # Store alert ONLY (no Telegram in batch to avoid spam)
             if is_alert:
                 background_tasks.add_task(
                     db_service.store_alert,
