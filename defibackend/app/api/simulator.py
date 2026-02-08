@@ -11,21 +11,21 @@ db = DatabaseService()
 
 
 @router.post("/start")
-async def start():
-    started = await start_simulator()
+def start():
+    started = start_simulator()
     return {
         "running": simulator_status(),
         "message": "Simulator started" if started else "Already running",
     }
 
-
 @router.post("/stop")
-async def stop():
-    stopped = await stop_simulator()
+def stop():
+    stopped = stop_simulator()
     return {
         "running": simulator_status(),
         "message": "Simulator stopped" if stopped else "Already stopped",
     }
+
 
 
 @router.post("/reset")

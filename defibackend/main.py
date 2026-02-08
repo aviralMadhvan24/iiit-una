@@ -15,6 +15,7 @@ from app.api.simulator import router as simulator_router
 from app.api import predict, alerts, health
 from app.auth.wallet import router as wallet_auth_router
 from app.api.wallet_activity import router as wallet_activity_router
+from app.services.simulator_controller import simulator_loop
 
 
 app = FastAPI(
@@ -42,4 +43,9 @@ app.include_router(wallet_auth_router, prefix="/api/v1", tags=["Auth"])
 app.include_router(simulator_router, prefix="/api/v1")
 
 
+
 app.include_router(wallet_activity_router, prefix="/api/v1")
+
+@app.on_event("startup")
+async def startup_event():
+    asyncio.create_task(simulator_loop())
