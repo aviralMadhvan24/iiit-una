@@ -6,7 +6,7 @@ import AppLayout from "../components/AppLayout";
 import PageContainer from "../components/PageContainer";
 import MetricCard from "../components/MetricCard";
 import AlertItem from "../components/AlertItem";
-import RiskChart from "../components/RiskCharts";
+import RiskCharts from "../components/RiskCharts";
 import { getAlertStats, getAlerts } from "../lib/api";
 
 export default function Dashboard() {
@@ -115,7 +115,7 @@ export default function Dashboard() {
               Real-time Risk Analysis
             </h3>
             <div className="h-[300px]">
-              <RiskChart data={chartData} />
+              <RiskCharts data={chartData} />
             </div>
           </div>
 
