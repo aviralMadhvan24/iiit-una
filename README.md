@@ -1,6 +1,6 @@
 <div align="center">
 
-# Suraksha Chain
+# MEVGuard
 
 ### Real-Time DeFi Attack Early Warning System for Uniswap
 
