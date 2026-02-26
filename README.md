@@ -39,13 +39,13 @@ Decentralized Finance (DeFi) has unlocked permissionless finance — but it has 
 > A malicious Uniswap transaction appears in the mempool, signaling a sandwich attack.
 >  **Users have a time window — but no system warns them.**
 
-**Suraksha Chain fills this gap.**
+****MEVGuard fills this gap.****
 
 ---
 
 ##  Solution Overview
 
-**Suraksha Chain** is a **real-time DeFi attack early warning system** that:
+****MEVGuard** is a **real-time DeFi attack early warning system** that::
 
 * Monitors **Uniswap transactions in the mempool**
 * Assigns **AI-assisted risk scores**
@@ -207,14 +207,14 @@ Since real mempool access is complex in hackathons:
 
 ##  Why This Is Unique
 
-| Traditional Tools      | DeFi Sentinel                 |
+| Traditional Tools      | MEVGuard                      |
 | ---------------------- | ----------------------------- |
 | ❌ Post-attack analysis | ✅ **Pre-attack detection**    |
 | ❌ On-chain only        | ✅ **Mempool + on-chain**      |
 | ❌ Technical raw data   | ✅ **Explainable risk scores** |
 | ❌ Reactive dashboards  | ✅ **Preventative alerts**     |
 
-> *“Suraksha Chain doesn’t analyze attacks — it predicts them.”*
+> *“MEVGuard doesn’t analyze attacks — it predicts them.”*
 
 ---
 
